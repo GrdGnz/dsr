@@ -1,0 +1,8 @@
+/* Styles for smaller screens (mobile/tablets) */
+@media (max-width: 768px) {
+
+    #sidebar.show {
+        width: 40%; /* Set the width when toggled */
+        display: block;
+    }
+}
