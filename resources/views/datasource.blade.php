@@ -56,7 +56,7 @@
 
             <!-- Table -->
             <div class="row">
-                <div id="tableDiv" class="table-responsive scroll">
+                <div id="tableDiv" class="table-responsive scroll p-2">
                     <table id="inventoryTable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -122,7 +122,7 @@
 
     .scroll {
         overflow: scroll;
-        scrollbar-color: red orange;
+        scrollbar-color: blue yellow;
         scrollbar-width: thick;
         visibility: visible;
     }
@@ -135,7 +135,7 @@
             scrollCss: {
                 'overflow-x': 'auto',
                 'overflow-y': 'hidden',
-                'scrollbar-color': 'red orange',
+                'scrollbar-color': 'blue yellow',
                 'scrollbar-width': 'thick'
             },
             contentCss: {
