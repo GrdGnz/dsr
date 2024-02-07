@@ -56,7 +56,7 @@
 
             <!-- Table -->
             <div class="row">
-                <div class="table-responsive">
+                <div id="tableDiv" class="table-responsive scroll">
                     <table id="inventoryTable" class="table table-striped table-bordered">
                         <thead>
                             <tr>
@@ -119,10 +119,31 @@
     .excel-button:hover {
         background-color: #45a049;
     }
+
+    .scroll {
+        overflow: scroll;
+        scrollbar-color: red orange;
+        scrollbar-width: thick;
+        visibility: visible;
+    }
 </style>
 
 <script>
     $(document).ready(function() {
+
+        $('#tableDiv').doubleScroll({
+            scrollCss: {
+                'overflow-x': 'auto',
+                'overflow-y': 'hidden',
+                'scrollbar-color': 'red orange',
+                'scrollbar-width': 'thick'
+            },
+            contentCss: {
+                'overflow-x': 'auto',
+                'overflow-y': 'hidden'
+            },
+        });
+
         // Initialize DataTable
         var table = $('#inventoryTable').DataTable({
             "dom": 'Bfrtip',
