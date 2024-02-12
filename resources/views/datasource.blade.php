@@ -43,11 +43,20 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="source">Source:</label>
-                            <input type="text" id="source" class="form-control">
+                            <select id="source" class="form-control">
+                                <option>----------</option>
+                                @foreach ($sources as $source)
+                                    <option value="{{ $source->CODE }}">{{ $source->DESCRIPTION }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="clientRef">Client Ref:</label>
                             <input type="text" id="clientRef" class="form-control">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="reloc">Reloc:</label>
+                            <input type="text" id="reloc" class="form-control">
                         </div>
                     </div>
                     <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
@@ -181,24 +190,27 @@
             var paxName = $('#paxName').val().toLowerCase();
             var source = $('#source').val().toLowerCase();
             var clientRef = $('#clientRef').val().toLowerCase();
+            var reloc = $('#reloc').val().toLowerCase(); // Add this line for the 'Reloc' filter
 
             $.fn.dataTable.ext.search.pop(); // Remove existing search functions
 
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
-                    var issueDate = data[0]; // Index of "Issue Date" column
-                    var invoiceNoData = data[10].toLowerCase(); // Index of "Invoice No" column
-                    var paxNameData = data[4].toLowerCase(); // Index of "Pax Name" column
-                    var sourceData = data[8].toLowerCase(); // Index of "Source" column
-                    var clientRefData = data[12].toLowerCase(); // Index of "Client Ref" column
+                    var issueDate = data[0];
+                    var invoiceNoData = data[10].toLowerCase();
+                    var paxNameData = data[4].toLowerCase();
+                    var sourceData = data[8].toLowerCase();
+                    var clientRefData = data[12].toLowerCase();
+                    var relocData = data[2].toLowerCase(); // Index of "Reloc" column
 
                     var issueDateInRange = (issueDateFrom === '' || (issueDate >= issueDateFrom && issueDate <= issueDateTo));
                     var invoiceNoMatch = (invoiceNo === '' || invoiceNoData.includes(invoiceNo));
                     var paxNameMatch = (paxName === '' || paxNameData.includes(paxName));
                     var sourceMatch = (source === '' || sourceData.includes(source));
                     var clientRefMatch = (clientRef === '' || clientRefData.includes(clientRef));
+                    var relocMatch = (reloc === '' || relocData.includes(reloc)); // Add this line for the 'Reloc' filter
 
-                    return issueDateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch;
+                    return issueDateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch; // Add 'relocMatch' here
                 }
             );
 
