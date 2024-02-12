@@ -35,5 +35,9 @@ class Inventory extends Model
         'UploadBy',
     ];
 
+    public function source()
+    {
+        return $this->belongsTo(Source::class, 'Source', 'CODE');
+    }
 
 }
