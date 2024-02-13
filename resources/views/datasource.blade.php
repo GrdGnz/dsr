@@ -24,10 +24,10 @@
                     <h5 class="card-title">Parameters</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row">
+                    <div class="row mt-5">
                         <div class="col-md-3 mb-3">
                             <label for="issueDateFrom">Issue Date From:</label>
-                            <input type="text" id="issueDateFrom" class="form-control date-filter" data-date-format="yyyy-mm-dd">
+                            <input type="text" id="issueDateFrom" class="form-control date-filter" data-date-format="yyyy-mm-dd" autocomplete="off">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="issueDateTo">Issue Date To:</label>
@@ -44,7 +44,7 @@
                         <div class="col-md-3 mb-3">
                             <label for="source">Source:</label>
                             <select id="source" class="form-control">
-                                <option>----------</option>
+                                <option value="">----------</option>
                                 @foreach ($sources as $source)
                                     <option value="{{ $source->CODE }}">{{ $source->DESCRIPTION }}</option>
                                 @endforeach
@@ -177,6 +177,20 @@
             format: 'yyyy-mm-dd',
         });
 
+        // Add onSelect event to copy selected date from 'Issue Date From' to 'Issue Date To'
+        $('#issueDateFrom').on('changeDate', function (selected) {
+            var startDate = new Date(selected.date.valueOf());
+            $('#issueDateTo').datepicker('setStartDate', startDate);
+            // Copy the selected date to 'Issue Date To'
+            $('#issueDateTo').val($('#issueDateFrom').val());
+        });
+
+        // Add input event to reflect typed input from 'Issue Date From' to 'Issue Date To'
+        $('#issueDateFrom').on('input', function () {
+            // Copy the typed input to 'Issue Date To'
+            $('#issueDateTo').val($(this).val());
+        });
+
         // Apply dynamic search when filters are applied
         $('#applyFilters').on('click', function () {
             applyFilters();
@@ -209,6 +223,9 @@
                     var sourceMatch = (source === '' || sourceData.includes(source));
                     var clientRefMatch = (clientRef === '' || clientRefData.includes(clientRef));
                     var relocMatch = (reloc === '' || relocData.includes(reloc)); // Add this line for the 'Reloc' filter
+
+                    // Check if 'Source' is not blank, then apply the filter
+                    var sourceMatch = (source === '' || sourceData.includes(source));
 
                     return issueDateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch; // Add 'relocMatch' here
                 }
