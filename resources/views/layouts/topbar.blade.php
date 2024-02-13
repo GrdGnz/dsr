@@ -1,4 +1,4 @@
-<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+<nav class="sb-topnav navbar navbar-expand navbar-dark marsman-bg-color-primary marsman-border-b-secondary-2">
     <!-- Navbar Brand-->
     <a class="navbar-brand ps-3" href="index.html">
         <p class="h6">{{ __(env('APP_NAME')) }}</p>

@@ -1,19 +1,19 @@
-<nav class="sb-sidenav accordion sb-sidenav-dark" id="sidenavAccordion">
+<nav class="sb-sidenav accordion marsman-bg-color-dark" id="sidenavAccordion">
     <div class="sb-sidenav-menu">
         <div class="nav">
-            <div class="sb-sidenav-menu-heading">Core</div>
-            <a class="nav-link" href="{{ route('home') }}">
+            <div class="sb-sidenav-menu-heading txt-secondary">Core</div>
+            <a class="nav-link text-white" href="{{ route('home') }}">
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
-            <a class="nav-link" href="{{ route('datasource') }}">
+            <a class="nav-link text-white" href="{{ route('datasource') }}">
                 <div class="sb-nav-link-icon"><i class="far fa-chart-bar"></i></div>
                 Data
             </a>
 
         </div>
     </div>
-    <div class="sb-sidenav-footer">
+    <div class="sb-sidenav-footer marsman-bg-color-semidark txt-secondary">
         <div class="small">Logged in as:</div>
         {{ Auth::user()->name }}
     </div>

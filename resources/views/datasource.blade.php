@@ -135,6 +135,10 @@
         scrollbar-width: thick;
         visibility: visible;
     }
+
+    #tableDiv td {
+        font-size: small;
+    }
 </style>
 
 <script>
@@ -163,6 +167,7 @@
                     text: 'Export to Excel',
                 }
             ],
+            "pageLength": 30,
         });
 
         // Hide DataTable pagination and length menu using jQuery and CSS
