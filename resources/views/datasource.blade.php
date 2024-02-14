@@ -81,7 +81,7 @@
                                 <th>Agent Sine</th>
                                 <th>Invoice No</th>
                                 <th>Date Requested</th>
-                                <th>Tota Airfare</th>
+                                <th>Total Airfare</th>
                                 <th>EMD Descr</th>
                                 <th>Date Upload</th>
                                 <th>Client Ref</th>
