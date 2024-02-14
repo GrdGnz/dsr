@@ -10,15 +10,16 @@ class InventoryController extends Controller
 {
     public function index()
     {
-        $inventoryData = Inventory::all();
+        // Fetch inventory data with IssueDate having year 2024
+        $inventoryData2024 = Inventory::whereYear('IssueDate', 2024)->get();
         $sources = Source::all();
 
-        $inventoryData->transform(function ($item) {
+        $inventoryData2024->transform(function ($item) {
             $item->PaxName = strtoupper($item->PaxName);
             return $item;
         });
 
-        return view('datasource', compact('inventoryData', 'sources'));
+        return view('datasource', compact('inventoryData2024', 'sources'));
     }
 
 }

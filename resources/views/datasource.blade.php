@@ -80,6 +80,8 @@
                                 <th>Source</th>
                                 <th>Agent Sine</th>
                                 <th>Invoice No</th>
+                                <th>Date Requested</th>
+                                <th>Tota Airfare</th>
                                 <th>EMD Descr</th>
                                 <th>Date Upload</th>
                                 <th>Client Ref</th>
@@ -87,7 +89,7 @@
                         </thead>
                         <tbody>
                             {{-- Loop through your Inventory records here --}}
-                            @foreach ($inventoryData as $inventory)
+                            @foreach ($inventoryData2024 as $inventory)
                                 <tr data-toggle="tooltip" data-placement="auto" title="{{ $inventory->Itinerary }}">
                                     <td>{{ $inventory->IssueDate }}</td>
                                     <td>{{ $inventory->TicketNumber }}</td>
@@ -100,6 +102,8 @@
                                     <td>{{ $inventory->Source }}</td>
                                     <td>{{ $inventory->AgentSine }}</td>
                                     <td>{{ $inventory->InvoiceNo }}</td>
+                                    <td>{{ $inventory->DateReqeusted }}</td>
+                                    <td>&#8369;{{ number_format($inventory->TotalAirfare, 2) }}</td>
                                     <td>{{ $inventory->EMDDescr }}</td>
                                     <td>{{ $inventory->DateUpload }}</td>
                                     <td>{{ $inventory->ClientRef }}</td>

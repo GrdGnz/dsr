@@ -30,6 +30,8 @@ class Inventory extends Model
         'AgentSine',
         'EMDDescr',
         'InvoiceNo',
+        'DateReqeusted',
+        'TotalAirfare',
         'Remarks',
         'DateUpload',
         'UploadBy',
