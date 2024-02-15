@@ -11,7 +11,7 @@ class InventoryController extends Controller
     public function index()
     {
         // Fetch inventory data with IssueDate having year 2024
-        $inventoryData2024 = Inventory::whereYear('IssueDate', 2024)->get();
+        $inventoryData2024 = Inventory::all();
         $sources = Source::all();
 
         $inventoryData2024->transform(function ($item) {

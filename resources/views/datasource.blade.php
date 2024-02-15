@@ -24,26 +24,26 @@
                     <h5 class="card-title">Parameters</h5>
                 </div>
                 <div class="card-body">
-                    <div class="row mt-5">
-                        <div class="col-md-3 mb-3">
-                            <label for="issueDateFrom">Issue Date From:</label>
-                            <input type="text" id="issueDateFrom" class="form-control date-filter" data-date-format="yyyy-mm-dd" autocomplete="off">
-                        </div>
-                        <div class="col-md-3 mb-3">
-                            <label for="issueDateTo">Issue Date To:</label>
-                            <input type="text" id="issueDateTo" class="form-control date-filter" data-date-format="yyyy-mm-dd">
-                        </div>
+                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="invoiceNo">Invoice No:</label>
-                            <input type="text" id="invoiceNo" class="form-control">
+                            <input type="text" id="invoiceNo" class="form-control txt-1">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="ticketInvoice">Ticket/Invoice:</label>
+                            <select id="ticketInvoice" class="form-control txt-1">
+                                <option value="all">All</option>
+                                <option value="withInvoice">With Invoice</option>
+                                <option value="withoutInvoice">Without Invoice</option>
+                            </select>
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="paxName">Pax Name:</label>
-                            <input type="text" id="paxName" class="form-control">
+                            <input type="text" id="paxName" class="form-control txt-1">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="source">Source:</label>
-                            <select id="source" class="form-control">
+                            <select id="source" class="form-control txt-1">
                                 <option value="">----------</option>
                                 @foreach ($sources as $source)
                                     <option value="{{ $source->CODE }}">{{ $source->DESCRIPTION }}</option>
@@ -52,14 +52,34 @@
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="clientRef">Client Ref:</label>
-                            <input type="text" id="clientRef" class="form-control">
+                            <input type="text" id="clientRef" class="form-control txt-1">
                         </div>
                         <div class="col-md-3 mb-3">
                             <label for="reloc">Reloc:</label>
-                            <input type="text" id="reloc" class="form-control">
+                            <input type="text" id="reloc" class="form-control txt-1">
+                        </div>
+
+                        <div class="row">
+                            <div class="col-md-3 mb-3">
+                                <label for="dateColumn">Date Column:</label>
+                                <select id="dateColumn" class="form-control txt-1">
+                                    <option value="IssueDate">Issue Date</option>
+                                    <option value="InvoiceDate">Invoice Date</option>
+                                    <option value="DateRequested">Date Requested</option>
+                                </select>
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="dateFrom">Date From:</label>
+                                <input type="text" id="dateFrom" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd" autocomplete="off">
+                            </div>
+                            <div class="col-md-3 mb-3">
+                                <label for="dateTo">Date To:</label>
+                                <input type="text" id="dateTo" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd">
+                            </div>
                         </div>
                     </div>
                     <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
+                    <button class="btn btn-secondary" id="clearFilters">Clear Form</button>
                 </div>
             </div>
 
@@ -67,11 +87,13 @@
             <div class="row">
                 <div id="tableDiv" class="table-responsive scroll p-2">
                     <table id="inventoryTable" class="table table-striped table-bordered">
-                        <thead>
+                        <thead class="marsman-bg-color-dark text-white">
                             <tr>
                                 <th>Issue Date</th>
                                 <th>Ticket Number</th>
+                                <th>Client Ref</th>
                                 <th>Reloc</th>
+                                <th>Invoice No</th>
                                 <th>Ticket Status</th>
                                 <th>Pax Name</th>
                                 <th>Base Fare</th>
@@ -79,12 +101,10 @@
                                 <th>Total Fare</th>
                                 <th>Source</th>
                                 <th>Agent Sine</th>
-                                <th>Invoice No</th>
+                                <th>Invoice Date</th>
                                 <th>Date Requested</th>
                                 <th>Total Airfare</th>
                                 <th>EMD Descr</th>
-                                <th>Date Upload</th>
-                                <th>Client Ref</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -93,7 +113,9 @@
                                 <tr data-toggle="tooltip" data-placement="auto" title="{{ $inventory->Itinerary }}">
                                     <td>{{ $inventory->IssueDate }}</td>
                                     <td>{{ $inventory->TicketNumber }}</td>
+                                    <td>{{ $inventory->ClientRef }}</td>
                                     <td>{{ $inventory->Reloc }}</td>
+                                    <td>{{ $inventory->InvoiceNo }}</td>
                                     <td>{{ $inventory->TicketStatus }}</td>
                                     <td>{{ $inventory->PaxName }}</td>
                                     <td>&#8369;{{ number_format($inventory->BaseFare, 2) }}</td>
@@ -101,12 +123,10 @@
                                     <td>&#8369;{{ number_format($inventory->TotalFare, 2) }}</td>
                                     <td>{{ $inventory->Source }}</td>
                                     <td>{{ $inventory->AgentSine }}</td>
-                                    <td>{{ $inventory->InvoiceNo }}</td>
-                                    <td>{{ $inventory->DateReqeusted }}</td>
+                                    <td>{{ $inventory->InvoiceDate }}</td>
+                                    <td>{{ $inventory->DateRequested }}</td>
                                     <td>&#8369;{{ number_format($inventory->TotalAirfare, 2) }}</td>
                                     <td>{{ $inventory->EMDDescr }}</td>
-                                    <td>{{ $inventory->DateUpload }}</td>
-                                    <td>{{ $inventory->ClientRef }}</td>
                                 </tr>
                             @endforeach
                         </tbody>
@@ -119,6 +139,10 @@
 
 <style>
     /* Add your custom styles here */
+
+    th, td {
+        white-space: nowrap;
+    }
     .excel-button {
         background-color: #4CAF50;
         color: white;
@@ -143,6 +167,7 @@
     #tableDiv td {
         font-size: small;
     }
+
 </style>
 
 <script>
@@ -180,24 +205,10 @@
         // Enable Bootstrap tooltips
         $('[data-toggle="tooltip"]').tooltip();
 
-        // Add date pickers for "Issue Date" columns
+        // Add date pickers for the selected date column
         $('.date-filter').datepicker({
             autoclose: true,
             format: 'yyyy-mm-dd',
-        });
-
-        // Add onSelect event to copy selected date from 'Issue Date From' to 'Issue Date To'
-        $('#issueDateFrom').on('changeDate', function (selected) {
-            var startDate = new Date(selected.date.valueOf());
-            $('#issueDateTo').datepicker('setStartDate', startDate);
-            // Copy the selected date to 'Issue Date To'
-            $('#issueDateTo').val($('#issueDateFrom').val());
-        });
-
-        // Add input event to reflect typed input from 'Issue Date From' to 'Issue Date To'
-        $('#issueDateFrom').on('input', function () {
-            // Copy the typed input to 'Issue Date To'
-            $('#issueDateTo').val($(this).val());
         });
 
         // Apply dynamic search when filters are applied
@@ -205,38 +216,70 @@
             applyFilters();
         });
 
+        // Add onSelect event to copy selected date from 'Issue Date From' to 'Issue Date To'
+        $('#dateFrom').on('changeDate', function (selected) {
+            var startDate = new Date(selected.date.valueOf());
+            $('#dateTo').datepicker('setStartDate', startDate);
+            // Copy the selected date to 'Date To'
+            $('#dateTo').val($('#dateFrom').val());
+        });
+
+        // Add input event to reflect typed input from 'Date From' to 'Date To'
+        $('#dateFrom').on('input', function () {
+            // Copy the typed input to 'Date To'
+            $('#dateTo').val($(this).val());
+        });
+
+        // Add click event for the 'Clear Form' button
+        $('#clearFilters').on('click', function () {
+            // Clear all form fields
+            $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo').val('');
+            // Reset date pickers
+            $('.date-filter').datepicker('setDate', null);
+            // Reset 'Ticket/Invoice' dropdown to 'All'
+            $('#ticketInvoice').val('all');
+
+            // Apply dynamic search with empty filters to reset the DataTable
+            applyFilters();
+        });
+
         // Function to apply dynamic search filters
         function applyFilters() {
-            var issueDateFrom = $('#issueDateFrom').val();
-            var issueDateTo = $('#issueDateTo').val();
+            var dateColumn = $('#dateColumn').val();
+            var dateFrom = $('#dateFrom').val();
+            var dateTo = $('#dateTo').val();
             var invoiceNo = $('#invoiceNo').val().toLowerCase();
             var paxName = $('#paxName').val().toLowerCase();
             var source = $('#source').val().toLowerCase();
             var clientRef = $('#clientRef').val().toLowerCase();
-            var reloc = $('#reloc').val().toLowerCase(); // Add this line for the 'Reloc' filter
+            var reloc = $('#reloc').val().toLowerCase();
+            var ticketInvoice = $('#ticketInvoice').val();
 
             $.fn.dataTable.ext.search.pop(); // Remove existing search functions
 
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
                     var issueDate = data[0];
-                    var invoiceNoData = data[10].toLowerCase();
-                    var paxNameData = data[4].toLowerCase();
-                    var sourceData = data[8].toLowerCase();
-                    var clientRefData = data[12].toLowerCase();
-                    var relocData = data[2].toLowerCase(); // Index of "Reloc" column
+                    var invoiceDate = data[11]; // Index of "Invoice Date" column
+                    var dateRequested = data[12]; // Index of "Date Requested" column
+                    var selectedDate = (dateColumn === 'IssueDate') ? issueDate :
+                                        (dateColumn === 'InvoiceDate') ? invoiceDate : dateRequested;
 
-                    var issueDateInRange = (issueDateFrom === '' || (issueDate >= issueDateFrom && issueDate <= issueDateTo));
-                    var invoiceNoMatch = (invoiceNo === '' || invoiceNoData.includes(invoiceNo));
-                    var paxNameMatch = (paxName === '' || paxNameData.includes(paxName));
-                    var sourceMatch = (source === '' || sourceData.includes(source));
-                    var clientRefMatch = (clientRef === '' || clientRefData.includes(clientRef));
-                    var relocMatch = (reloc === '' || relocData.includes(reloc)); // Add this line for the 'Reloc' filter
+                    var dateInRange = (dateFrom === '' || (selectedDate >= dateFrom && selectedDate <= dateTo));
+                    var invoiceNoMatch = (invoiceNo === '' || data[10].toLowerCase().includes(invoiceNo));
+                    var paxNameMatch = (paxName === '' || data[4].toLowerCase().includes(paxName));
+                    var sourceMatch = (source === '' || data[8].toLowerCase().includes(source));
+                    var clientRefMatch = (clientRef === '' || data[12].toLowerCase().includes(clientRef));
+                    var relocMatch = (reloc === '' || data[2].toLowerCase().includes(reloc));
 
-                    // Check if 'Source' is not blank, then apply the filter
-                    var sourceMatch = (source === '' || sourceData.includes(source));
-
-                    return issueDateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch; // Add 'relocMatch' here
+                    // Apply 'Ticket/Invoice' filter
+                    if (ticketInvoice === 'withInvoice') {
+                        return dateInRange && !invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                    } else if (ticketInvoice === 'withoutInvoice') {
+                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                    } else {
+                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                    }
                 }
             );
 
