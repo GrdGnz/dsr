@@ -26,6 +26,23 @@
                 <div class="card-body">
                     <div class="row">
                         <div class="col-md-3 mb-3">
+                            <label for="year">Year:</label>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="year" id="allYears" checked>
+                                <label class="form-check-label" for="allYears">All</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="year" id="year2023">
+                                <label class="form-check-label" for="year2023">2023</label>
+                            </div>
+                            <div class="form-check form-check-inline">
+                                <input type="radio" class="form-check-input" name="year" id="year2024">
+                                <label class="form-check-label" for="year2024">2024</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
                             <label for="invoiceNo">Invoice No:</label>
                             <input type="text" id="invoiceNo" class="form-control txt-1">
                         </div>
@@ -238,6 +255,9 @@
             $('.date-filter').datepicker('setDate', null);
             // Reset 'Ticket/Invoice' dropdown to 'All'
             $('#ticketInvoice').val('all');
+            // Check 'All' radio button and uncheck others
+            $('#allYears').prop('checked', true);
+            $('#year2023, #year2024').prop('checked', false);
 
             // Apply dynamic search with empty filters to reset the DataTable
             applyFilters();
@@ -254,6 +274,9 @@
             var clientRef = $('#clientRef').val().toLowerCase();
             var reloc = $('#reloc').val().toLowerCase();
             var ticketInvoice = $('#ticketInvoice').val();
+            var allYears = $('#allYears').prop('checked');
+            var year2023 = $('#year2023').prop('checked');
+            var year2024 = $('#year2024').prop('checked');
 
             $.fn.dataTable.ext.search.pop(); // Remove existing search functions
 
@@ -271,14 +294,15 @@
                     var sourceMatch = (source === '' || data[8].toLowerCase().includes(source));
                     var clientRefMatch = (clientRef === '' || data[12].toLowerCase().includes(clientRef));
                     var relocMatch = (reloc === '' || data[2].toLowerCase().includes(reloc));
+                    var yearMatch = allYears || (year2023 && data[0].includes('2023')) || (year2024 && data[0].includes('2024'));
 
                     // Apply 'Ticket/Invoice' filter
                     if (ticketInvoice === 'withInvoice') {
-                        return dateInRange && !invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                        return dateInRange && !invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
                     } else if (ticketInvoice === 'withoutInvoice') {
-                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
                     } else {
-                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch;
+                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
                     }
                 }
             );
