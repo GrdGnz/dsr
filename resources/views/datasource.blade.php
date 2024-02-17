@@ -20,10 +20,14 @@
 
             <!-- Search Parameters Card -->
             <div class="card mb-4">
-                <div class="card-header">
+                <div class="card-header d-flex justify-content-between align-items-center">
                     <h5 class="card-title">Parameters</h5>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="parametersToggleSwitch" data-on-text="Show" data-off-text="Hide" data-toggle="switch">
+                        <label class="custom-control-label" for="parametersToggleSwitch"></label>
+                    </div>
                 </div>
-                <div class="card-body">
+                <div class="card-body" id="parametersCardBody">
                     <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="year">Year:</label>
@@ -189,6 +193,18 @@
 
 <script>
     $(document).ready(function() {
+
+        // Initialize Bootstrap Switch
+        $('#parametersToggleSwitch').bootstrapSwitch();
+
+        // Handle the switch state change
+        $('#parametersToggleSwitch').on('switchChange.bootstrapSwitch', function(event, state) {
+            if (state) {
+                $('#parametersCardBody').slideDown(); // Show the card-body
+            } else {
+                $('#parametersCardBody').slideUp(); // Hide the card-body
+            }
+        });
 
         $('#tableDiv').doubleScroll({
             scrollCss: {
