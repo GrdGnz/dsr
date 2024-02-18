@@ -67,7 +67,7 @@
                             <select id="source" class="form-control txt-1">
                                 <option value="">----------</option>
                                 @foreach ($sources as $source)
-                                    <option value="{{ $source->CODE }}">{{ $source->DESCRIPTION }}</option>
+                                    <option value="{{ trim($source->CODE) }}">{{ $source->DESCRIPTION }}</option>
                                 @endforeach
                             </select>
                         </div>
@@ -299,18 +299,18 @@
             $.fn.dataTable.ext.search.push(
                 function (settings, data, dataIndex) {
                     var issueDate = data[0];
-                    var invoiceDate = data[11]; // Index of "Invoice Date" column
-                    var dateRequested = data[12]; // Index of "Date Requested" column
+                    var invoiceDate = data[12]; // Index of "Invoice Date" column
+                    var dateRequested = data[13]; // Index of "Date Requested" column
                     var selectedDate = (dateColumn === 'IssueDate') ? issueDate :
                                         (dateColumn === 'InvoiceDate') ? invoiceDate : dateRequested;
 
                     var dateInRange = (dateFrom === '' || (selectedDate >= dateFrom && selectedDate <= dateTo));
-                    var invoiceNoMatch = (invoiceNo === '' || data[10].toLowerCase().includes(invoiceNo));
-                    var paxNameMatch = (paxName === '' || data[4].toLowerCase().includes(paxName));
-                    var sourceMatch = (source === '' || data[8].toLowerCase().includes(source));
-                    var clientRefMatch = (clientRef === '' || data[12].toLowerCase().includes(clientRef));
-                    var relocMatch = (reloc === '' || data[2].toLowerCase().includes(reloc));
-                    var yearMatch = allYears || (year2023 && data[0].includes('2023')) || (year2024 && data[0].includes('2024'));
+                    var invoiceNoMatch = (invoiceNo === '' || data[4].toLowerCase().includes(invoiceNo));
+                    var paxNameMatch = (paxName === '' || data[6].toLowerCase().includes(paxName));
+                    var sourceMatch = (source === '' || data[10].toLowerCase().includes(source));
+                    var clientRefMatch = (clientRef === '' || data[2].toLowerCase().includes(clientRef));
+                    var relocMatch = (reloc === '' || data[3].toLowerCase().includes(reloc));
+                    var yearMatch = allYears || (year2023 && issueDate.includes('2023')) || (year2024 && issueDate.includes('2024'));
 
                     // Apply 'Ticket/Invoice' filter
                     if (ticketInvoice === 'withInvoice') {
