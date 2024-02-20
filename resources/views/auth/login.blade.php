@@ -4,10 +4,13 @@
 <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8 mt-5">
+            <div class="w-100 text-center">
+                <img src="{{ asset('img/logo.jpg') }}" width="500">
+            </div>
             <div class="card">
-                <div class="card-header">{{ __('Login') }}</div>
+                <div class="card-header marsman-bg-color-dark text-white">{{ __('Login') }}</div>
 
-                <div class="card-body">
+                <div class="card-body marsman-bg-color-secondary">
                     <form method="POST" action="{{ route('login') }}">
                         @csrf
 
@@ -53,7 +56,7 @@
 
                         <div class="row mb-0">
                             <div class="col-md-8 offset-md-4">
-                                <button type="submit" class="btn btn-primary">
+                                <button type="submit" class="btn marsman-btn-primary">
                                     {{ __('Login') }}
                                 </button>
 

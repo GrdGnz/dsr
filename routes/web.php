@@ -16,8 +16,8 @@ use Illuminate\Support\Facades\Auth;
 
 Route::middleware(['auth'])->group(function () {
     Route::get('/home', [App\Http\Controllers\HomeController::class, 'index'])->name('home');
-    Route::get('/datasource', [App\Http\Controllers\InventoryController::class, 'index'])->name('datasource');
-    Route::get('/search', [App\Http\Controllers\InventoryController::class, 'search'])->name('search');
+    Route::get('/inventory', [App\Http\Controllers\InventoryController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory/fetch-data', [App\Http\Controllers\InventoryController::class, 'fetchData'])->name('inventory.fetchData');
 });
 
 Route::get('/', function () {
