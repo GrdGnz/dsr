@@ -32,20 +32,14 @@
                         <div class="col-md-3 mb-3">
                             <label for="year">Year:</label>
                             <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" name="year" id="allYears" checked>
-                                <label class="form-check-label" for="allYears">All</label>
-                            </div>
-                            <div class="form-check form-check-inline">
                                 <input type="radio" class="form-check-input" name="year" id="year2023">
                                 <label class="form-check-label" for="year2023">2023</label>
                             </div>
                             <div class="form-check form-check-inline">
-                                <input type="radio" class="form-check-input" name="year" id="year2024">
+                                <input type="radio" class="form-check-input" name="year" id="year2024" checked>
                                 <label class="form-check-label" for="year2024">2024</label>
                             </div>
                         </div>
-                    </div>
-                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="invoiceNo">Invoice No:</label>
                             <input type="text" id="invoiceNo" class="form-control txt-1">
@@ -62,6 +56,8 @@
                             <label for="paxName">Pax Name:</label>
                             <input type="text" id="paxName" class="form-control txt-1">
                         </div>
+                    </div>
+                    <div class="row">
                         <div class="col-md-3 mb-3">
                             <label for="source">Source:</label>
                             <select id="source" class="form-control txt-1">
@@ -79,24 +75,23 @@
                             <label for="reloc">Reloc:</label>
                             <input type="text" id="reloc" class="form-control txt-1">
                         </div>
-
-                        <div class="row">
-                            <div class="col-md-3 mb-3">
-                                <label for="dateColumn">Date Column:</label>
-                                <select id="dateColumn" class="form-control txt-1">
-                                    <option value="IssueDate">Issue Date</option>
-                                    <option value="InvoiceDate">Invoice Date</option>
-                                    <option value="DateRequested">Date Requested</option>
-                                </select>
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="dateFrom">Date From:</label>
-                                <input type="text" id="dateFrom" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd" autocomplete="off">
-                            </div>
-                            <div class="col-md-3 mb-3">
-                                <label for="dateTo">Date To:</label>
-                                <input type="text" id="dateTo" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd">
-                            </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-3">
+                            <label for="dateColumn">Date Column:</label>
+                            <select id="dateColumn" class="form-control txt-1">
+                                <option value="IssueDate">Issue Date</option>
+                                <option value="InvoiceDate">Invoice Date</option>
+                                <option value="DateRequested">Date Requested</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="dateFrom">Date From:</label>
+                            <input type="text" id="dateFrom" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd" autocomplete="off">
+                        </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="dateTo">Date To:</label>
+                            <input type="text" id="dateTo" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd">
                         </div>
                     </div>
                     <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
@@ -107,6 +102,7 @@
             <!-- Table -->
             <div class="row">
                 <div id="tableDiv" class="table-responsive scroll p-2">
+                    <span class="txt-1">(Hold SHIFT + Mouse Wheel UP or Down to scroll table horizontally)</span>
                     <table id="inventoryTable" class="table table-striped table-bordered">
                         <thead class="marsman-bg-color-dark text-white">
                             <tr>
@@ -129,27 +125,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            {{-- Loop through your Inventory records here --}}
-                            @foreach ($inventoryData2024 as $inventory)
-                                <tr data-toggle="tooltip" data-placement="auto" title="{{ $inventory->Itinerary }}">
-                                    <td>{{ $inventory->IssueDate }}</td>
-                                    <td>{{ $inventory->TicketNumber }}</td>
-                                    <td>{{ $inventory->ClientRef }}</td>
-                                    <td>{{ $inventory->Reloc }}</td>
-                                    <td>{{ $inventory->InvoiceNo }}</td>
-                                    <td>{{ $inventory->TicketStatus }}</td>
-                                    <td>{{ $inventory->PaxName }}</td>
-                                    <td>&#8369;{{ number_format($inventory->BaseFare, 2) }}</td>
-                                    <td>&#8369;{{ number_format($inventory->TotalTaxes, 2) }}</td>
-                                    <td>&#8369;{{ number_format($inventory->TotalFare, 2) }}</td>
-                                    <td>{{ $inventory->Source }}</td>
-                                    <td>{{ $inventory->AgentSine }}</td>
-                                    <td>{{ $inventory->InvoiceDate }}</td>
-                                    <td>{{ $inventory->DateRequested }}</td>
-                                    <td>&#8369;{{ number_format($inventory->TotalAirfare, 2) }}</td>
-                                    <td>{{ $inventory->EMDDescr }}</td>
-                                </tr>
-                            @endforeach
+                            {{-- Data will be loaded dynamically using DataTables server-side processing --}}
                         </tbody>
                     </table>
                 </div>
@@ -219,8 +195,52 @@
             },
         });
 
-        // Initialize DataTable
+        // Initialize DataTable with server-side processing
         var table = $('#inventoryTable').DataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": {
+                "url": "{{ route('inventory.fetchData') }}",
+                "type": "POST",
+                "data": function (d) {
+                    // Additional data to be sent to the server
+                    d._token = "{{ csrf_token() }}";
+                    d.year2023 = $('#year2023').prop('checked');
+                    d.year2024 = $('#year2024').prop('checked');
+                    d.invoiceNo = $('#invoiceNo').val();
+                    d.paxName = $('#paxName').val();
+                    d.source = $('#source').val();
+                    d.clientRef = $('#clientRef').val();
+                    d.reloc = $('#reloc').val();
+                    d.ticketInvoice = $('#ticketInvoice').val();
+                    d.dateColumn = $('#dateColumn').val();
+                    d.dateFrom = $('#dateFrom').val();
+                    d.dateTo = $('#dateTo').val();
+                    d.start = d.start || 0; // DataTables passes 'start' for pagination
+                    d.length = 30; // Set the number of records per page to 30
+                },
+                "dataSrc": function (json) {
+                    return json.data || []; // Return empty array if no data
+                }
+            },
+            "columns": [
+                { "data": "IssueDate" },
+                { "data": "TicketNumber" },
+                { "data": "ClientRef" },
+                { "data": "Reloc" },
+                { "data": "InvoiceNo" },
+                { "data": "TicketStatus" },
+                { "data": "PaxName" },
+                { "data": "BaseFare" },
+                { "data": "TotalTaxes" },
+                { "data": "TotalFare" },
+                { "data": "Source" },
+                { "data": "AgentSine" },
+                { "data": "InvoiceDate" },
+                { "data": "DateRequested" },
+                { "data": "TotalAirfare" },
+                { "data": "EMDDescr" },
+            ],
             "dom": 'Bfrtip',
             "buttons": [
                 {
@@ -230,10 +250,8 @@
                 }
             ],
             "pageLength": 30,
+            "deferRender": true, // Defer rendering of the table
         });
-
-        // Hide DataTable pagination and length menu using jQuery and CSS
-        $('.dataTables_length').css('display', 'none');
 
         // Enable Bootstrap tooltips
         $('[data-toggle="tooltip"]').tooltip();
@@ -244,16 +262,27 @@
             format: 'yyyy-mm-dd',
         });
 
-        // Apply dynamic search when filters are applied
+        // Function to load data when the "Apply Filters" button is clicked
+        function loadData() {
+            // Reload the DataTable to fetch and display data based on filters
+            table.ajax.reload();
+        }
+
+        // Event listener for the "Apply Filters" button
         $('#applyFilters').on('click', function () {
-            applyFilters();
+            // Reset the DataTable to the first page when filters are applied
+            table.page(0).draw('page');
+            loadData(); // Call the function to load data
         });
 
         // Add onSelect event to copy selected date from 'Issue Date From' to 'Issue Date To'
-        $('#dateFrom').on('changeDate', function (selected) {
-            var startDate = new Date(selected.date.valueOf());
-            $('#dateTo').datepicker('setStartDate', startDate);
-            // Copy the selected date to 'Date To'
+        $('#dateFrom').on('change', function (selected) {
+            if (selected && selected.date) {  // Check if selected and selected.date are defined
+                var startDate = new Date(selected.date.valueOf());
+                $('#dateTo').datepicker('setStartDate', startDate);
+                // Copy the selected date to 'Date To'
+                $('#dateTo').val($('#dateFrom').val());
+            }
             $('#dateTo').val($('#dateFrom').val());
         });
 
@@ -263,7 +292,7 @@
             $('#dateTo').val($(this).val());
         });
 
-        // Add click event for the 'Clear Form' button
+        // Clear form and redraw DataTable
         $('#clearFilters').on('click', function () {
             // Clear all form fields
             $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo').val('');
@@ -273,59 +302,12 @@
             $('#ticketInvoice').val('all');
             // Check 'All' radio button and uncheck others
             $('#allYears').prop('checked', true);
-            $('#year2023, #year2024').prop('checked', false);
+            $('#year2023').prop('checked', false);
+            $('#year2024').prop('checked');
 
-            // Apply dynamic search with empty filters to reset the DataTable
-            applyFilters();
+            // Clear DataTable data and redraw
+            table.clear().draw();
         });
-
-        // Function to apply dynamic search filters
-        function applyFilters() {
-            var dateColumn = $('#dateColumn').val();
-            var dateFrom = $('#dateFrom').val();
-            var dateTo = $('#dateTo').val();
-            var invoiceNo = $('#invoiceNo').val().toLowerCase();
-            var paxName = $('#paxName').val().toLowerCase();
-            var source = $('#source').val().toLowerCase();
-            var clientRef = $('#clientRef').val().toLowerCase();
-            var reloc = $('#reloc').val().toLowerCase();
-            var ticketInvoice = $('#ticketInvoice').val();
-            var allYears = $('#allYears').prop('checked');
-            var year2023 = $('#year2023').prop('checked');
-            var year2024 = $('#year2024').prop('checked');
-
-            $.fn.dataTable.ext.search.pop(); // Remove existing search functions
-
-            $.fn.dataTable.ext.search.push(
-                function (settings, data, dataIndex) {
-                    var issueDate = data[0];
-                    var invoiceDate = data[12]; // Index of "Invoice Date" column
-                    var dateRequested = data[13]; // Index of "Date Requested" column
-                    var selectedDate = (dateColumn === 'IssueDate') ? issueDate :
-                                        (dateColumn === 'InvoiceDate') ? invoiceDate : dateRequested;
-
-                    var dateInRange = (dateFrom === '' || (selectedDate >= dateFrom && selectedDate <= dateTo));
-                    var invoiceNoMatch = (invoiceNo === '' || data[4].toLowerCase().includes(invoiceNo));
-                    var paxNameMatch = (paxName === '' || data[6].toLowerCase().includes(paxName));
-                    var sourceMatch = (source === '' || data[10].toLowerCase().includes(source));
-                    var clientRefMatch = (clientRef === '' || data[2].toLowerCase().includes(clientRef));
-                    var relocMatch = (reloc === '' || data[3].toLowerCase().includes(reloc));
-                    var yearMatch = allYears || (year2023 && issueDate.includes('2023')) || (year2024 && issueDate.includes('2024'));
-
-                    // Apply 'Ticket/Invoice' filter
-                    if (ticketInvoice === 'withInvoice') {
-                        return dateInRange && !invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
-                    } else if (ticketInvoice === 'withoutInvoice') {
-                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
-                    } else {
-                        return dateInRange && invoiceNoMatch && paxNameMatch && sourceMatch && clientRefMatch && relocMatch && yearMatch;
-                    }
-                }
-            );
-
-            // Redraw the DataTable with new filters
-            table.draw();
-        }
     });
 </script>
 

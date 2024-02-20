@@ -5,7 +5,7 @@
                 <div class="sb-nav-link-icon"><i class="fas fa-tachometer-alt"></i></div>
                 Dashboard
             </a>
-            <a class="nav-link text-white" href="{{ route('datasource') }}">
+            <a class="nav-link text-white" href="{{ route('inventory.index') }}">
                 <div class="sb-nav-link-icon"><i class="far fa-chart-bar"></i></div>
                 Data
             </a>
