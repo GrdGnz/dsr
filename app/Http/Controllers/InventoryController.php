@@ -40,7 +40,7 @@ class InventoryController extends Controller
             $query->where('InvoiceNo', 'like', '%' . $request->input('invoiceNo') . '%');
         }
 
-        if ($request->has('clientRefInv')) {
+        if ($request->filled('clientRefInv')) {
             $query->where('ClientRefInv', 'like', '%' . $request->input('clientRefInv') . '%');
         }
 
