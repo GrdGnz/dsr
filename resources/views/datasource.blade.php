@@ -243,17 +243,23 @@
                 {
                     "data": "BaseFare",
                     "className": "text-right",
-                    "render": formatCurrency
+                    "render": function(data, type, row, meta) {
+                        return formatCurrency(data, type);
+                    }
                 },
                 {
                     "data": "TotalTaxes",
                     "className": "text-right",
-                    "render": formatCurrency
+                    "render": function(data, type, row, meta) {
+                        return formatCurrency(data, type);
+                    }
                 },
                 {
                     "data": "TotalFare",
                     "className": "text-right",
-                    "render": formatCurrency
+                    "render": function(data, type, row, meta) {
+                        return formatCurrency(data, type);
+                    }
                 },
                 { "data": "Source" },
                 { "data": "InvoiceNo" },
@@ -263,12 +269,14 @@
                 {
                     "data": "TotalAirfare",
                     "className": "text-right",
-                    "render": formatCurrency
+                    "render": function(data, type, row, meta) {
+                        return formatCurrency(data, type);
+                    }
                 },
                 { "data": "EMDDescr" },
             ],
             "columnDefs": [
-                { "targets": [6, 7, 8, 9], "className": "text-right" } // Adjust the column indices based on your table structure
+                { "targets": [6, 7, 8, 14], "className": "text-right" } // Adjust the column indices based on your table structure
             ],
             "dom": 'Bfrtip',
             "buttons": [
@@ -289,12 +297,31 @@
 
                         // Add a custom row with additional information
                         var additionalRow = sheet.createElement('row');
+
+                        // Create a custom cell in the additional row
                         var additionalCell = sheet.createElement('c');
                         additionalCell.setAttribute('s', '2'); // Customize cell style if needed
                         var additionalData = sheet.createElement('data');
+                        additionalData.setAttribute('type', 'string');
                         additionalData.innerText = getAdditionalInfo(); // Use a function to get the desired text
                         additionalCell.appendChild(additionalData);
+
+                        // Append the custom cell to the additional row
                         additionalRow.appendChild(additionalCell);
+
+                        // Loop through each row and apply text-right class to fare columns
+                        $('row c', sheet).each(function () {
+                            var cellIndex = $(this).index();
+
+                            // Fare columns indices (adjust based on your table structure)
+                            var fareColumnIndices = [6, 7, 8, 14];
+
+                            if ($.inArray(cellIndex, fareColumnIndices) !== -1) {
+                                $(this).attr('s', '2'); // Customize cell style if needed
+                            }
+                        });
+
+                        // Append the additional row to the sheet's data
                         sheet.getElementsByTagName('sheetData')[0].appendChild(additionalRow);
                     }
                 },
@@ -314,8 +341,15 @@
 
         // Reusable function to format currency with peso symbol
         function formatCurrency(data, type) {
-            var formattedValue = parseFloat(data);
-            return type === 'display' && !isNaN(formattedValue) ? '₱' + formattedValue.toFixed(2) : data;
+            var numericValue = parseFloat(data);
+
+            if (type === 'display' && !isNaN(numericValue)) {
+                // Format the number with commas for thousands and include the peso symbol
+                return '₱' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2 });
+            } else {
+                // Return the original data if it's not a valid number
+                return data;
+            }
         }
 
         // Function to get the additional information
