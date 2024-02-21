@@ -112,19 +112,18 @@
                         <thead class="marsman-bg-color-dark text-white">
                             <tr>
                                 <th>Issue Date</th>
-                                <th>Ticket Number</th>
-                                <th>Client Ref</th>
                                 <th>Reloc</th>
-                                <th>Invoice No</th>
-                                <th>Client Ref Inv</th>
+                                <th>Ticket Number</th>
                                 <th>Ticket Status</th>
                                 <th>Pax Name</th>
+                                <th>Client Ref</th>
                                 <th>Base Fare</th>
                                 <th>Total Taxes</th>
                                 <th>Total Fare</th>
                                 <th>Source</th>
-                                <th>Agent Sine</th>
+                                <th>Invoice No</th>
                                 <th>Invoice Date</th>
+                                <th>Client Ref Inv</th>
                                 <th>Date Requested</th>
                                 <th>Total Airfare</th>
                                 <th>EMD Descr</th>
@@ -169,6 +168,10 @@
 
     #tableDiv td {
         font-size: small;
+    }
+
+    .text-right {
+        text-align: right !important;
     }
 
 </style>
@@ -232,22 +235,40 @@
             },
             "columns": [
                 { "data": "IssueDate" },
-                { "data": "TicketNumber" },
-                { "data": "ClientRef" },
                 { "data": "Reloc" },
-                { "data": "InvoiceNo" },
-                { "data": "ClientRefInv" },
+                { "data": "TicketNumber" },
                 { "data": "TicketStatus" },
                 { "data": "PaxName" },
-                { "data": "BaseFare" },
-                { "data": "TotalTaxes" },
-                { "data": "TotalFare" },
+                { "data": "ClientRef" },
+                {
+                    "data": "BaseFare",
+                    "className": "text-right",
+                    "render": formatCurrency
+                },
+                {
+                    "data": "TotalTaxes",
+                    "className": "text-right",
+                    "render": formatCurrency
+                },
+                {
+                    "data": "TotalFare",
+                    "className": "text-right",
+                    "render": formatCurrency
+                },
                 { "data": "Source" },
-                { "data": "AgentSine" },
+                { "data": "InvoiceNo" },
                 { "data": "InvoiceDate" },
+                { "data": "ClientRefInv" },
                 { "data": "DateRequested" },
-                { "data": "TotalAirfare" },
+                {
+                    "data": "TotalAirfare",
+                    "className": "text-right",
+                    "render": formatCurrency
+                },
                 { "data": "EMDDescr" },
+            ],
+            "columnDefs": [
+                { "targets": [6, 7, 8, 9], "className": "text-right" } // Adjust the column indices based on your table structure
             ],
             "dom": 'Bfrtip',
             "buttons": [
@@ -290,6 +311,12 @@
             autoclose: true,
             format: 'yyyy-mm-dd',
         });
+
+        // Reusable function to format currency with peso symbol
+        function formatCurrency(data, type) {
+            var formattedValue = parseFloat(data);
+            return type === 'display' && !isNaN(formattedValue) ? '₱' + formattedValue.toFixed(2) : data;
+        }
 
         // Function to get the additional information
         function getAdditionalInfo() {
