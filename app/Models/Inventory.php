@@ -31,6 +31,7 @@ class Inventory extends Model
         'EMDDescr',
         'InvoiceNo',
         'InvoiceDate',
+        'ClientRefInv',
         'DateRequested',
         'TotalAirfare',
         'Remarks',

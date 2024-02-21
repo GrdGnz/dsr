@@ -40,6 +40,10 @@ class InventoryController extends Controller
             $query->where('InvoiceNo', 'like', '%' . $request->input('invoiceNo') . '%');
         }
 
+        if ($request->has('clientRefInv')) {
+            $query->where('ClientRefInv', 'like', '%' . $request->input('clientRefInv') . '%');
+        }
+
         if ($request->filled('ticketInvoice')) {
             if ($request->input('ticketInvoice') === 'withInvoice') {
                 $query->whereNotNull('InvoiceNo');
