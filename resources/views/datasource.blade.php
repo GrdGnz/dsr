@@ -72,6 +72,11 @@
                             <input type="text" id="clientRef" class="form-control txt-1">
                         </div>
                         <div class="col-md-3 mb-3">
+                            <label for="clientRefInv">Client Ref Inv:</label>
+                            <input type="text" id="clientRefInv" class="form-control txt-1">
+                        </div>
+
+                        <div class="col-md-3 mb-3">
                             <label for="reloc">Reloc:</label>
                             <input type="text" id="reloc" class="form-control txt-1">
                         </div>
@@ -111,6 +116,7 @@
                                 <th>Client Ref</th>
                                 <th>Reloc</th>
                                 <th>Invoice No</th>
+                                <th>Client Ref Inv</th>
                                 <th>Ticket Status</th>
                                 <th>Pax Name</th>
                                 <th>Base Fare</th>
@@ -208,6 +214,7 @@
                     d.year2023 = $('#year2023').prop('checked');
                     d.year2024 = $('#year2024').prop('checked');
                     d.invoiceNo = $('#invoiceNo').val();
+                    d.clientRefInv = $('#clientRefInv').val();
                     d.paxName = $('#paxName').val();
                     d.source = $('#source').val();
                     d.clientRef = $('#clientRef').val();
@@ -229,6 +236,7 @@
                 { "data": "ClientRef" },
                 { "data": "Reloc" },
                 { "data": "InvoiceNo" },
+                { "data": "ClientRefInv" },
                 { "data": "TicketStatus" },
                 { "data": "PaxName" },
                 { "data": "BaseFare" },
@@ -247,7 +255,28 @@
                     extend: 'excel',
                     className: 'excel-button',
                     text: 'Export to Excel',
-                }
+                    customize: function (xlsx) {
+                        // Add a custom header row at the top
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var headerRow = sheet.getElementsByTagName('row')[0];
+                        var cell = document.createElement('c');
+                        cell.setAttribute('s', '2'); // Customize cell style if needed
+                        var data = document.createElement('data');
+                        data.innerText = 'Daily Ticket Sales Report';
+                        cell.appendChild(data);
+                        headerRow.insertBefore(cell, headerRow.firstChild);
+
+                        // Add a custom row with additional information
+                        var additionalRow = sheet.createElement('row');
+                        var additionalCell = sheet.createElement('c');
+                        additionalCell.setAttribute('s', '2'); // Customize cell style if needed
+                        var additionalData = sheet.createElement('data');
+                        additionalData.innerText = getAdditionalInfo(); // Use a function to get the desired text
+                        additionalCell.appendChild(additionalData);
+                        additionalRow.appendChild(additionalCell);
+                        sheet.getElementsByTagName('sheetData')[0].appendChild(additionalRow);
+                    }
+                },
             ],
             "pageLength": 30,
             "deferRender": true, // Defer rendering of the table
@@ -261,6 +290,14 @@
             autoclose: true,
             format: 'yyyy-mm-dd',
         });
+
+        // Function to get the additional information
+        function getAdditionalInfo() {
+            var selectedDateColumn = $('#dateColumn option:selected').text();
+            var dateFrom = $('#dateFrom').val();
+            var dateTo = $('#dateTo').val();
+            return selectedDateColumn + ': ' + dateFrom + ' - ' + dateTo;
+        }
 
         // Function to load data when the "Apply Filters" button is clicked
         function loadData() {
@@ -295,18 +332,17 @@
         // Clear form and redraw DataTable
         $('#clearFilters').on('click', function () {
             // Clear all form fields
-            $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo').val('');
+            $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo, #clientRefInv').val('');
             // Reset date pickers
             $('.date-filter').datepicker('setDate', null);
             // Reset 'Ticket/Invoice' dropdown to 'All'
             $('#ticketInvoice').val('all');
             // Check 'All' radio button and uncheck others
-            $('#allYears').prop('checked', true);
             $('#year2023').prop('checked', false);
             $('#year2024').prop('checked');
 
-            // Clear DataTable data and redraw
-            table.clear().draw();
+            table.page(0).draw('page');
+            loadData();
         });
     });
 </script>
