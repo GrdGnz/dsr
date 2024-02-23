@@ -46,9 +46,11 @@ class InventoryController extends Controller
 
         if ($request->filled('ticketInvoice')) {
             if ($request->input('ticketInvoice') === 'withInvoice') {
-                $query->whereNotNull('InvoiceNo');
+                $query->whereNotNull('InvoiceNo')->where('InvoiceNo','<>','');
             } elseif ($request->input('ticketInvoice') === 'withoutInvoice') {
-                $query->whereNull('InvoiceNo');
+                $query->where(function ($query) {
+                    $query->whereNull('InvoiceNo')->orWhere('InvoiceNo', '');
+                });
             }
         }
 
