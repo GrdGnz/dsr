@@ -108,6 +108,7 @@
             <div class="row">
                 <div id="tableDiv" class="table-responsive scroll p-2">
                     <span class="txt-1">(Hold SHIFT + Mouse Wheel UP or Down to scroll table horizontally)</span>
+                    <br><button id="ExportButton" class="button-excel txt-3">Export to Excel</button>
                     <table id="inventoryTable" class="table table-striped table-bordered">
                         <thead class="marsman-bg-color-dark text-white">
                             <tr>
@@ -139,6 +140,13 @@
     </div>
 </div>
 
+<!-- Lightbox for "Exporting to Excel..." -->
+<div id="exportingLightbox" class="export-lightbox">
+    <div class="export-lightbox-content">
+        <p>Exporting to Excel...</p>
+    </div>
+</div>
+
 <style>
     /* Add your custom styles here */
 
@@ -153,10 +161,21 @@
         border-radius: 4px;
         cursor: pointer;
         margin-bottom: 10px;
+        display: none;
     }
 
     .excel-button:hover {
         background-color: #45a049;
+    }
+
+    .button-excel {
+        background-color: #4CAF50;
+        color: white;
+        padding: 8px 12px;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        margin-bottom: 10px;
     }
 
     .scroll {
@@ -174,6 +193,26 @@
         text-align: right !important;
     }
 
+    /* Lightbox styling */
+    .export-lightbox {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5); /* Semi-transparent black background */
+    }
+
+    .export-lightbox-content {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        text-align: center;
+        color: white;
+        font-size: 18px;
+    }
 </style>
 
 <script>
@@ -204,6 +243,78 @@
             },
         });
 
+        // Function to show the exporting lightbox
+        function showExportingLightbox() {
+            $('#exportingLightbox').fadeIn();
+        }
+
+        // Function to hide the exporting lightbox
+        function hideExportingLightbox() {
+            $('#exportingLightbox').fadeOut();
+        }
+
+        $('.button-excel').on('click', function () {
+            // Set the length parameter to -1 for export
+            var dt = $('#inventoryTable').DataTable();
+            showExportingLightbox();
+            dt.page.len(-1).draw();
+
+            setTimeout(function () {
+                // Trigger the export by simulating a click on the hidden export button
+                $('.excel-button').click();
+            }, 10000); // 10 seconds
+        });
+
+        $.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons';
+        $.extend(true, $.fn.dataTable.defaults, {
+            buttons: [
+                {
+                    extend: 'excel',
+                    className: 'excel-button',
+                    text: 'Export to Excel',
+                    action: function (e, dt, button, config) {
+
+                        // Open the export dialog
+                        $.fn.dataTable.ext.buttons.excelHtml5.action.call(this, e, dt, button, config);
+                        hideExportingLightbox();
+
+                        setTimeout(function () {
+                            dt.page.len(30).draw();
+                        }, 3000); // 3 seconds
+                    },
+                    customize: function (xlsx) {
+
+                        // Add a custom header row at the top
+                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
+                        var headerRow = sheet.getElementsByTagName('row')[0];
+                        var cell = document.createElement('c');
+                        cell.setAttribute('s', '2'); // Customize cell style if needed
+                        var data = document.createElement('data');
+                        data.innerText = 'Daily Ticket Sales Report';
+                        cell.appendChild(data);
+                        headerRow.insertBefore(cell, headerRow.firstChild);
+
+                        // Add a custom row with additional information
+                        var additionalRow = sheet.createElement('row');
+
+                        // Create a custom cell in the additional row
+                        var additionalCell = sheet.createElement('c');
+                        additionalCell.setAttribute('s', '2'); // Customize cell style if needed
+                        var additionalData = sheet.createElement('data');
+                        additionalData.setAttribute('type', 'string');
+                        additionalData.innerText = getAdditionalInfo(); // Use a function to get the desired text
+                        additionalCell.appendChild(additionalData);
+
+                        // Append the custom cell to the additional row
+                        additionalRow.appendChild(additionalCell);
+
+                        // Append the additional row to the sheet's data
+                        sheet.getElementsByTagName('sheetData')[0].appendChild(additionalRow);
+                    },
+                }
+            ]
+        });
+
         // Initialize DataTable with server-side processing
         var table = $('#inventoryTable').DataTable({
             "processing": true,
@@ -214,6 +325,7 @@
                 "data": function (d) {
                     // Additional data to be sent to the server
                     d._token = "{{ csrf_token() }}";
+                    //d.export = 'all';
                     d.year2023 = $('#year2023').prop('checked');
                     d.year2024 = $('#year2024').prop('checked');
                     d.invoiceNo = $('#invoiceNo').val();
@@ -227,7 +339,6 @@
                     d.dateFrom = $('#dateFrom').val();
                     d.dateTo = $('#dateTo').val();
                     d.start = d.start || 0; // DataTables passes 'start' for pagination
-                    d.length = 30; // Set the number of records per page to 30
                 },
                 "dataSrc": function (json) {
                     return json.data || []; // Return empty array if no data
@@ -279,41 +390,6 @@
                 { "targets": [6, 7, 8, 14], "className": "text-right" } // Adjust the column indices based on your table structure
             ],
             "dom": 'Bfrtip',
-            "buttons": [
-                {
-                    extend: 'excel',
-                    className: 'excel-button',
-                    text: 'Export to Excel',
-                    customize: function (xlsx) {
-                        // Add a custom header row at the top
-                        var sheet = xlsx.xl.worksheets['sheet1.xml'];
-                        var headerRow = sheet.getElementsByTagName('row')[0];
-                        var cell = document.createElement('c');
-                        cell.setAttribute('s', '2'); // Customize cell style if needed
-                        var data = document.createElement('data');
-                        data.innerText = 'Daily Ticket Sales Report';
-                        cell.appendChild(data);
-                        headerRow.insertBefore(cell, headerRow.firstChild);
-
-                        // Add a custom row with additional information
-                        var additionalRow = sheet.createElement('row');
-
-                        // Create a custom cell in the additional row
-                        var additionalCell = sheet.createElement('c');
-                        additionalCell.setAttribute('s', '2'); // Customize cell style if needed
-                        var additionalData = sheet.createElement('data');
-                        additionalData.setAttribute('type', 'string');
-                        additionalData.innerText = getAdditionalInfo(); // Use a function to get the desired text
-                        additionalCell.appendChild(additionalData);
-
-                        // Append the custom cell to the additional row
-                        additionalRow.appendChild(additionalCell);
-
-                        // Append the additional row to the sheet's data
-                        sheet.getElementsByTagName('sheetData')[0].appendChild(additionalRow);
-                    }
-                },
-            ],
             "pageLength": 30,
             "deferRender": true, // Defer rendering of the table
         });
