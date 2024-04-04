@@ -1,6 +1,6 @@
 <nav class="sb-topnav navbar navbar-expand navbar-dark marsman-bg-color-primary marsman-border-b-secondary-2">
     <!-- Navbar Brand-->
-    <a class="navbar-brand ps-3" href="index.html">
+    <a class="navbar-brand ps-3" href="{{ route('home') }}">
         <img src="{{ asset('img/logo-blue.jpg') }}" width="150">
     </a>
     <!-- Sidebar Toggle-->
