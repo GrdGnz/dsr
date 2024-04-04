@@ -262,7 +262,7 @@
             setTimeout(function () {
                 // Trigger the export by simulating a click on the hidden export button
                 $('.excel-button').click();
-            }, 10000); // 10 seconds
+            }, 12000); // 10 seconds
         });
 
         $.fn.dataTable.Buttons.defaults.dom.container.className = 'dt-buttons';
