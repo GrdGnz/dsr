@@ -70,6 +70,10 @@ class InventoryController extends Controller
             $query->where('Reloc', 'like', '%' . $request->input('reloc') . '%');
         }
 
+        if ($request->filled('paymentType')) {
+            $query->where('PaymentType', 'like', '%' . $request->input('reloc') . '%');
+        }
+
         if ($request->filled('dateColumn') && $request->filled('dateFrom') && $request->filled('dateTo')) {
             $dateColumn = $request->input('dateColumn');
             $dateFrom = $request->input('dateFrom');

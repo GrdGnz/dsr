@@ -98,6 +98,14 @@
                             <label for="dateTo">Date To:</label>
                             <input type="text" id="dateTo" class="form-control date-filter txt-1" data-date-format="yyyy-mm-dd">
                         </div>
+                        <div class="col-md-3 mb-3">
+                            <label for="paymentType">Payment Type:</label>
+                            <select id="paymentType" class="form-control txt-1">
+                                <option value="CASH">CASH</option>
+                                <option value="CREDIT">CREDIT</option>
+                                <option value="CHARGE">CHARGE</option>
+                            </select>
+                        </div>
                     </div>
                     <button class="btn btn-primary" id="applyFilters">Apply Filters</button>
                     <button class="btn btn-secondary" id="clearFilters">Clear Form</button>
@@ -118,6 +126,7 @@
                                 <th>Ticket Status</th>
                                 <th>Pax Name</th>
                                 <th>Client Ref</th>
+                                <th>Currency</th>
                                 <th>Base Fare</th>
                                 <th>Total Taxes</th>
                                 <th>Total Fare</th>
@@ -128,6 +137,7 @@
                                 <th>Date Requested</th>
                                 <th>Total Airfare</th>
                                 <th>EMD Descr</th>
+                                <th>Payment Type</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -338,6 +348,7 @@
                     d.dateColumn = $('#dateColumn').val();
                     d.dateFrom = $('#dateFrom').val();
                     d.dateTo = $('#dateTo').val();
+                    d.paymentType = $('#paymentType').val();
                     d.start = d.start || 0; // DataTables passes 'start' for pagination
                 },
                 "dataSrc": function (json) {
@@ -351,6 +362,7 @@
                 { "data": "TicketStatus" },
                 { "data": "PaxName" },
                 { "data": "ClientRef" },
+                { "data": "Currency" },
                 {
                     "data": "BaseFare",
                     "className": "text-right",
@@ -385,6 +397,7 @@
                     }
                 },
                 { "data": "EMDDescr" },
+                { "data": "PaymentType" },
             ],
             "columnDefs": [
                 { "targets": [6, 7, 8, 14], "className": "text-right" } // Adjust the column indices based on your table structure
@@ -409,7 +422,7 @@
 
             if (type === 'display' && !isNaN(numericValue)) {
                 // Format the number with commas for thousands and include the peso symbol
-                return '₱' + numericValue.toLocaleString('en-US', { minimumFractionDigits: 2 });
+                return numericValue.toLocaleString('en-US', { minimumFractionDigits: 2 });
             } else {
                 // Return the original data if it's not a valid number
                 return data;
@@ -457,7 +470,7 @@
         // Clear form and redraw DataTable
         $('#clearFilters').on('click', function () {
             // Clear all form fields
-            $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo, #clientRefInv').val('');
+            $('#invoiceNo, #paxName, #source, #clientRef, #reloc, #dateFrom, #dateTo, #clientRefInv, #paymentType').val('');
             // Reset date pickers
             $('.date-filter').datepicker('setDate', null);
             // Reset 'Ticket/Invoice' dropdown to 'All'
